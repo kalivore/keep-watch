@@ -10,7 +10,7 @@ GlobalVariable Property _KPW_DebugToFile Auto
 bool priDebugToFile
 bool Property DebugToFile
 	bool function get()
-		return priDebugToFile
+		return true;priDebugToFile
 	endFunction
 	function set(bool val)
 		_KPW_DebugToFile.SetValue(val as int)
@@ -29,6 +29,12 @@ bool Property AnimatedWaking
 		priAnimatedWaking = val
 	endFunction
 endProperty
+
+
+FormList Property _KPW_Fires_All Auto
+FormList Property _KPW_Fires_Small Auto
+FormList Property _KPW_Fires_Medium Auto
+FormList Property _KPW_Fires_Large Auto
 
 
 event OnInit()
@@ -78,6 +84,29 @@ Function Maintenance()
 
 endFunction
 
+
+
+
+function AddCampfireFires()
+	Form _Camp_Campfire_Light_2 = Game.GetFormFromFile(0x00025BBA, "Campfire.esm") ; Small
+	Form _Camp_ObjectRubbleFire = Game.GetFormFromFile(0x0002D04D, "Campfire.esm") ; Medium
+	Form _Camp_Campfire_Light_3 = Game.GetFormFromFile(0x00025BBB, "Campfire.esm") ; Medium
+	Form _Camp_Campfire_Light_4 = Game.GetFormFromFile(0x00025BBC, "Campfire.esm") ; Medium
+	Form _Camp_Campfire_Light_5 = Game.GetFormFromFile(0x00025BBD, "Campfire.esm") ; Large
+
+	_KPW_Fires_All.AddForm(_Camp_Campfire_Light_2)
+	_KPW_Fires_Small.AddForm(_Camp_Campfire_Light_2)
+
+	_KPW_Fires_All.AddForm(_Camp_ObjectRubbleFire)
+	_KPW_Fires_Medium.AddForm(_Camp_ObjectRubbleFire)
+	_KPW_Fires_All.AddForm(_Camp_Campfire_Light_3)
+	_KPW_Fires_Medium.AddForm(_Camp_Campfire_Light_3)
+	_KPW_Fires_All.AddForm(_Camp_Campfire_Light_4)
+	_KPW_Fires_Medium.AddForm(_Camp_Campfire_Light_4)
+
+	_KPW_Fires_All.AddForm(_Camp_Campfire_Light_5)
+	_KPW_Fires_Small.AddForm(_Camp_Campfire_Light_5)
+endFunction
 
 string function GetVersionAsString(float afVersion)
 
