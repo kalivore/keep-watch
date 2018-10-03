@@ -1,0 +1,105 @@
+Scriptname _KPW_QuestScript extends Quest  
+
+float Property CurrentVersion = 0.0100 AutoReadonly
+float previousVersion
+
+string Property ModName = "Keep Watch" AutoReadonly
+string Property LogName = "KeepWatch" AutoReadonly
+
+GlobalVariable Property _KPW_DebugToFile Auto
+bool priDebugToFile
+bool Property DebugToFile
+	bool function get()
+		return priDebugToFile
+	endFunction
+	function set(bool val)
+		_KPW_DebugToFile.SetValue(val as int)
+		priDebugToFile = val
+	endFunction
+endProperty
+
+GlobalVariable Property _KPW_AnimatedWaking Auto
+bool priAnimatedWaking
+bool Property AnimatedWaking
+	bool function get()
+		return priAnimatedWaking
+	endFunction
+	function set(bool val)
+		_KPW_AnimatedWaking.SetValue(val as int)
+		priAnimatedWaking = val
+	endFunction
+endProperty
+
+
+event OnInit()
+
+	Update()
+
+endEvent
+
+function Update()
+
+	; floating-point math is hard..  let's go shopping!
+	int iPreviousVersion = (PreviousVersion * 10000) as int
+	int iCurrentVersion = (CurrentVersion * 10000) as int
+
+	if (iCurrentVersion != iPreviousVersion)
+
+		;;;;;;;;;;;;;;;;;;;;;;;;;;
+		; version-specific updates
+		;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+		; end version-specific updates
+		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+		; notify current version
+		string msg = ModName
+		if (PreviousVersion > 0)
+			msg += " updated from v" + GetVersionAsString(PreviousVersion) + " to "
+		else
+			msg += " running "
+		endIf
+		msg += "v" + GetVersionAsString(CurrentVersion)
+		DebugStuff(msg, msg, true)
+
+		PreviousVersion = CurrentVersion
+	endIf
+
+	Maintenance()
+
+endFunction
+
+Function Maintenance()
+
+	Debug.OpenUserLog(LogName)
+
+	DebugToFile = _KPW_DebugToFile.GetValue() as bool
+
+endFunction
+
+
+string function GetVersionAsString(float afVersion)
+
+	string raw = afVersion as string
+	int dotPos = StringUtil.Find(raw, ".")
+	string major = StringUtil.SubString(raw, 0, dotPos)
+	string minor = StringUtil.SubString(raw, dotPos + 1, 2)
+	string revsn = StringUtil.SubString(raw, dotPos + 3, 2)
+	return major + "." + minor + "." + revsn
+
+endFunction
+
+function DebugStuff(string asLogMsg, string asScreenMsg = "", bool abPrefix = false)
+
+	if (DebugToFile)
+		Debug.TraceUser(LogName, asLogMsg)
+	endIf
+	if (asScreenMsg != "")
+		if (abPrefix)
+			asScreenMsg = ModName + " - " + asScreenMsg
+		endIf
+		Debug.Notification(asScreenMsg)
+	endIf
+
+endFunction
